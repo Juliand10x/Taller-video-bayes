@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv
+venv/
+env/
+.env
+
+# LaTeX
+*.aux
+*.log
+*.out
+*.pdf
+*.toc
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.gz
+*.synctex.gz
+
+# Data (Opcional: Si quieres que tus compañeros descarguen el excel por fuera)
+# BaseUBER.xlsx
+# movistar.xlsx

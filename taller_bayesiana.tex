@@ -1,0 +1,227 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{float}
+
+\geometry{margin=2.5cm}
+
+\title{
+    \vspace{-2cm}
+    \textbf{\Large Universidad Externado de Colombia} \\
+    \large Pregrado en Ciencia de Datos \\
+    \vspace{0.5cm}
+    \textbf{\huge Taller Integrado de Regresión Bayesiana} \\
+    \large Caso Uber y Venta de Boletas Movistar Arena \\
+    \textit{Estadística Bayesiana}
+}
+
+\author{
+    \textbf{Equipo de Trabajo:} \\
+    Julian Camilo, Julián Duarte, Tomás Rincón \\
+    \textit{Facultad de Ciencia de Datos}
+}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Introducción}
+Imagina una noche de viernes en Bogotá: miles de personas salen de un concierto en el \textbf{Movistar Arena} y todos comparten la misma pregunta: ¿Cómo volver a casa? Este taller explora ese momento, utilizando la estadística bayesiana para entender el comportamiento de los usuarios de \textbf{Uber Pool} y la logística alrededor del evento. Nuestro objetivo es transformar la incertidumbre de una ciudad en movimiento en decisiones estratégicas informadas, contando la historia de cómo los datos se convierten en soluciones.
+
+\section{Parte I: Regresión Lineal Bayesiana}
+El propósito de esta parte es analizar mediante regresión lineal bayesiana relaciones relevantes en el experimento de Uber Pool para evaluar la viabilidad operativa del servicio en Bogotá.
+
+\subsection{Desarrollo del modelo y Selección Inicial de Variables}
+Para comenzar, planteamos una \textbf{hipótesis inicial} de las variables que \textit{creemos} que serán útiles para nuestro modelo, basándonos puramente en la lógica del negocio. Es importante aclarar que esta es solo una selección preliminar (hipótesis) que, más adelante, será sometida a validación matemática.
+
+Bajo esta premisa lógica, el modelo lineal bayesiano propuesto tendría la forma general:
+\bigskip
+\begin{center}
+    $y_i = \beta_0 + \beta_1 X_{1i} + \beta_2 X_{2i} + \dots + \beta_k X_{ki} + \epsilon_i$,  $\epsilon_i \sim N(0, \sigma^2)$
+\end{center}
+\bigskip
+
+donde nuestras variables candidatas iniciales son:
+\begin{itemize}
+    \item $y_i$ (\textit{trips\_pool}):
+    \begin{itemize}
+        \item \textbf{Descripción:} Cantidad de viajes compartidos completados (número entero).
+        \item \textbf{Justificación:} Es lo que queremos predecir. Nos dice directamente qué tanto la gente está usando el servicio.
+    \end{itemize}
+    \item $X_{1i}$ (\textit{wait\_time}):
+    \begin{itemize}
+        \item \textbf{Descripción:} Tiempo de espera que ve el usuario en la app (medido en minutos).
+        \item \textbf{Justificación:} Es el cambio principal que introdujo Uber. Lo usamos para ver si hacer esperar a la gente reduce la cantidad de viajes.
+    \end{itemize}
+    \item $X_{2i}$ (\textit{treat}):
+    \begin{itemize}
+        \item \textbf{Descripción:} Variable que vale 1 si el usuario entró al experimento y 0 si no (el experimento consistió en aumentar intencionalmente el tiempo de espera a 5 minutos, en lugar de los 2 minutos habituales).
+        \item \textbf{Justificación:} Nos sirve para identificar fácilmente a quiénes se les aplicó la nueva estrategia.
+    \end{itemize}
+    \item $X_{3i}$ (\textit{commute}):
+    \begin{itemize}
+        \item \textbf{Descripción:} Variable que vale 1 si es hora pico y 0 si es un horario normal.
+        \item \textbf{Justificación:} La usamos porque es obvio que en hora pico siempre habrá más viajes, sin importar el tiempo de espera.
+    \end{itemize}
+    \item $\beta$ (Coeficientes):
+    \begin{itemize}
+        \item \textbf{Descripción:} Números que el modelo calculará.
+        \item \textbf{Justificación:} Nos indicarán exactamente cuántos viajes se pierden o se ganan por cada minuto extra de espera.
+    \end{itemize}
+    \item $\sigma^2$ (Varianza del Error):
+    \begin{itemize}
+        \item \textbf{Descripción:} Un número positivo que mide el margen de error.
+        \item \textbf{Justificación:} Representa todo lo que nuestro modelo no alcanza a explicar, ya que el comportamiento humano nunca es 100\% predecible.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection*{Paso 1: Análisis Exploratorio de Datos (EDA)}
+Antes de construir el modelo bayesiano, realizamos un Análisis Exploratorio de Datos (EDA) guiado por visualizaciones en Python para entender el comportamiento real del servicio en Bogotá.
+
+Primero, analizamos nuestra variable objetivo (\textit{trips\_pool}). Encontramos que, en promedio, se completan 1,408 viajes compartidos por periodo, con una desviación estándar de $\approx 257$ viajes. Este es el comportamiento base que nuestros predictores deberán intentar explicar.
+
+A continuación, visualizamos cómo nuestras covariables afectan la cantidad de viajes:
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{eda_wait_time.png}
+        \caption{Viajes según el tiempo de espera}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{eda_commute.png}
+        \caption{Viajes según horario (Hora Pico vs Normal)}
+    \end{minipage}
+\end{figure}
+
+Al observar estas gráficas, confirmamos dos puntos muy importantes para nuestro modelo:
+\begin{itemize}
+    \item \textbf{Efecto del tiempo de espera:} El primer gráfico nos muestra algo sumamente interesante (y contraintuitivo): al pasar el tiempo de espera estimado de 2 a 5 minutos, la cantidad media de viajes no sufre una caída drástica, sino que se mantiene sorprendentemente estable (o incluso con un levísimo aumento). Esto sugiere que la demanda del servicio es inelástica frente a una demora de 3 minutos extra.
+    \item \textbf{Efecto de la hora pico:} En el segundo gráfico, al comparar horarios normales (0) frente a las horas pico (1), notamos que la demanda tiene un comportamiento muy similar en ambas franjas, aunque con picos ligeramente superiores durante el \textit{commute}. Seguiremos utilizando la variable para validar esto estadísticamente, pero de entrada la diferencia visual no es extrema.
+\end{itemize}
+
+\subsubsection*{Paso 2: Validación y Matriz de Correlación}
+Después de confirmar el impacto individual de cada variable, debíamos asegurarnos de que no hubiera problemas de multicolinealidad. Si incluimos dos variables que miden exactamente lo mismo, el modelo no podrá identificar cuál de las dos es la causante real de un cambio y el cálculo matemático fallará. Para revisar esto, generamos una matriz de correlación de Pearson:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{uber_correlation.png}
+    \caption{Matriz de Correlación: Evaluando redundancias entre predictores}
+    \label{fig:corr_uber}
+\end{figure}
+
+Al ver los resultados en esta matriz, nos llevamos una sorpresa clave: hay una \textbf{correlación perfecta (1.0)} entre la variable \textit{treat} (que simplemente dice si el usuario era parte del experimento o no) y la variable \textit{wait\_time} (el tiempo de espera). ¿Qué significa esto en la vida práctica? Nos confirma que "aplicar el tratamiento" se basó única y exclusivamente en subir los tiempos de espera a esos usuarios. 
+
+Como ambas variables miden exactamente la misma información, si las ponemos juntas, nuestro modelo matemático va a colapsar porque no sabrá a cuál de las dos atribuirle el impacto en los viajes. Por esta gran razón estadística, \textbf{decidimos sacar la variable \textit{treat}}. Nos quedaremos únicamente con \textit{wait\_time}, dado que medir el problema en "minutos" es mucho más lógico y fácil de explicar que un "sí o no".
+
+\subsubsection*{Conclusión: Selección Definitiva de Variables}
+Tras revisar la información y analizar las correlaciones entre variables, la conclusión es que nuestra lista inicial debía cambiar. A continuación explicamos, de forma muy sencilla, con qué partes de la base de datos nos quedamos y cuáles descartamos:
+
+\textbf{Variables Conservadas:}
+\begin{itemize}
+    \item \textbf{\textit{trips\_pool}:} Se queda porque es lo que queremos adivinar (viajes totales de Uber Pool).
+    \item \textbf{\textit{wait\_time}:} Se queda porque es el tiempo de espera en minutos que Uber cambió a propósito. Usar los minutos nos permite explicar resultados de forma muy natural.
+    \item \textbf{\textit{commute}:} Se queda porque necesitamos separar la alta demanda de la hora pico frente a un horario normal.
+\end{itemize}
+
+\textbf{Variables Descartadas:}
+\begin{itemize}
+    \item \textbf{\textit{treat}:} La descartamos porque resultó ser exactamente lo mismo que el tiempo de espera (\textit{wait\_time}). Si dejábamos ambas, íbamos a confundir la matemática del modelo.
+    \item \textbf{\textit{period\_start}:} La descartamos porque saber la fecha exacta no nos sirve de mucho; lo importante es saber solamente si era hora pico o no (\textit{commute}).
+    \item \textbf{\textit{trips\_express}:} La descartamos porque son los viajes del producto competidor. La gente escoge Express \textit{después} de ver el tiempo alto de espera en el Pool. Si intentamos usar un evento futuro (coger Express) para predecir otro evento futuro (coger Pool), no estaríamos capturando la verdadera causa, que es el tiempo.
+    \item \textbf{\textit{rider\_cancellations}:} La descartamos porque las cancelaciones suceden \textit{después} de pedir el viaje. Nosotros queremos predecir la intención original.
+    \item \textbf{\textit{total\_driver\_payout}:} La descartamos porque el cheque de pago del conductor ocurre al final de todo; no sirve para adivinar el comportamiento del pasajero al principio del proceso.
+    \item \textbf{\textit{total\_matches} y \textit{total\_double\_matches}:} Las descartamos porque son algo interno de la aplicación. A los clientes no les importa si los emparejan 2 o 3 veces; esto no influye en si toman o no un Uber.
+\end{itemize}
+
+Por todo lo anterior, \textbf{nuestro modelo final utilizará solo dos predictoras}: el tiempo de espera (\textit{wait\_time}) y si es hora pico o no (\textit{commute}).
+\subsubsection*{Paso 3: Justificación de los Priors}
+Ya con una selección de variables matemáticamente robusta, el último paso es definir nuestros \textit{priors} para los coeficientes ($\beta$) y para la varianza del error ($\sigma$).
+
+Para los coeficientes $\beta$, elegimos distribuciones Normales centradas en cero con una variabilidad bastante amplia: $\beta \sim \text{Normal}(0, 10)$. Estos funcionan como priors débilmente informativos. En la práctica, poner la media en cero significa que no asumimos de entrada si el efecto será positivo o negativo; dejamos que la evidencia de los datos de Uber determine tanto la dirección como la magnitud real del impacto.
+
+Por su parte, para el término del error ($\sigma$), definimos una distribución Half-Normal: $\sigma \sim \text{HalfNormal}(300)$. Usamos esta distribución porque asegura matemáticamente que la varianza siempre tome valores positivos, permitiendo al mismo tiempo suficiente rango para que el modelo pueda explorar la incertidumbre residual de los datos.
+
+\subsection{Resultados e Interpretación del Modelo}
+\label{sec:resultados_uber}
+
+Tras programar nuestro modelo matemático en Python usando la librería \textit{PyMC}, le pedimos al computador que analizara nuestra suposición mediante un proceso conocido como **simulación MCMC** (Markov Chain Monte Carlo). 
+
+Aunque el nombre suene a algo extremadamente complejo que pocos entienden, en la práctica es muy fácil de comprender: una simulación MCMC no es más que decirle al computador \textit{"No intentes adivinar un solo resultado exacto; más bien, agarra los datos originales de Uber y ensaya a ciegas miles y miles de combinaciones posibles hasta que encuentres qué números tienen mayor probabilidad de imitar a la vida real"}. 
+
+Para que los resultados fueran robustos, en nuestro caso obligamos a la computadora a ensayar combinaciones **10,000 veces** distintas (distribuidas en 4 canales paralelos). Al terminar, la máquina nos arrojó tres gráficas clave de validación. A continuación explicamos en términos simples cómo entender cada una de ellas para poder opinar como gerentes:
+
+\subsubsection*{1. ¿La máquina "estudió" bien o se perdió en el camino? (Traceplot)}
+
+Lo primero que todo científico de datos debe preguntarse es si el computador hizo la "tarea de ensayar opciones" de manera estable. Para descubrirlo, se usa un gráfico llamado diagnóstico de trazas o \textbf{Traceplot}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{uber_trace_plot.png}
+    \caption{Distribuciones Posteriores (Traceplot): Evaluando la estabilidad de la simulación.}
+    \label{fig:uber_trace}
+\end{figure}
+
+Para interpretar este gráfico no necesitas saber cálculos complejos, solo observar dos aspectos visuales del comportamiento algorítmico:
+\begin{itemize}
+    \item \textbf{El panel izquierdo:} Si las diferentes líneas de colores logran formar juntas curvas redondeadas y suaves como "campanitas", significa que el proceso sí logró hallar el centro en el que se ubica la verdad. 
+    \item \textbf{El panel derecho:} Para un estadístico esta es la parte clave. Si allí todo parece una mancha ruidosa e irregular como si fuera una "oruga peluda" (así se le apoda en la industria), entonces es una gran noticia. Significa que el computador barajó y exploró de manera muy eficiente miles de valores sin quedarse trabado en ninguno matemático en especial. Aprobamos este chequeo.
+\end{itemize}
+
+\subsubsection*{2. Respondiendo a la pregunta principal (Forest Plot e Intervalo HDI)}
+
+Resueltos los aspectos aburridos y de estabilidad interna, podemos por fin buscar la respuesta principal del proyecto: \textit{¿Afecta negativamente hacer que un pasajero espere 5 minutos intentando buscar su Uber Pool, o da matemáticamente igual y podíamos ahorrar gastos operativos?}
+
+A diferencia de la estadística de colegio elemental que dictamina que todo es un único resultado irrefutable; nosotros usamos Inferencia Bayesiana donde impera un concepto bellísimo llamado \textbf{HDI al 95\%} (Intervalo de Alta Densidad).
+Para entenderlo simple, un HDI es como decirle a tu jefe: \textit{"No pondré mis manos al fuego lanzándote el número exacto del impacto de este cambio, pero estoy 95\% seguro de que, tome el número que tome, vivirá dentro de este rango que va desde el número A hasta el número B"}. 
+
+Veamos de forma visual cuáles fueron los HDI de nuestro problema:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{uber_forest_plot.png}
+    \caption{Intervalos de Credibilidad del 95\% (Forest Plot): HDIs paramétricos.}
+    \label{fig:uber_forest}
+\end{figure}
+
+Al leer los "bigotes azules" de este gráfico y nuestro espacio en blanco numérico, concluimos que:
+\begin{itemize}
+    \item Estamos 95\% seguros de que aumentar el tiempo en minutos (\textit{beta\_wait}) cambiará la cantidad total de viajes en un rango de \textbf{[-4.6 a 27.4]}. 
+    \item Estamos 95\% seguros de que la alta estacionalidad de la hora pico (\textit{beta\_commute}) altera los viajes en un rango de \textbf{[-15.7 a 21.7]}.
+\end{itemize}
+
+\subsubsection*{3. Prueba final: ¿El modelo logra parecerse a Uber? (Gráfica PPC)}
+
+Por muy impresionante que haya sido la estadística, antes de decirle algo oficial a la plana directiva solicitamos que se genere una prueba de fuego, el Chequeo Predictivo de Ajustes o \textbf{PPC}. Este le pide a la computadora que ya "conoce" la receta inventarse una tarde de viajes nueva y la compare junto a los datos crudos de las verdaderas tardes brindadas por Uber.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{uber_ppc_plot.png}
+    \caption{PPC: ¿El algoritmo logra imitar a la realidad de la empresa?}
+    \label{fig:uber_ppc}
+\end{figure}
+La gráfica contesta nuestras dudas de forma elocuente. Como queda claro, tanto las múltiples iteraciones azules de la máquina, como la media del modelo (\textit{línea naranja}), logran capturar densamente la estructura inicial negra que era equivalente a los datos reales de Uber. Nuestro modelo es apto y está validado.
+
+\subsubsection*{Conclusión Ejecutiva: Un Sueño Cumplido para la Sede Central}
+
+¿Qué significa esto a nivel de negocio y de operaciones? La matemática de nuestros cálculos está en el \textit{Forest Plot}. Allí hay un minúsculo pero asombroso detalle probabilístico: \textbf{Ambos intervalos del 95\% atraviesan la línea vertical del cero} (sus posibles efectos nacían en números negativos y llegaban hasta los números positivos). 
+
+Si a las matemáticas les resulta igualmente posible que el tiempo que hiciste demorar afecte un -4 o un +20 tus ventas futuras; se concluye globalmente bajo "Significancia de Efecto nulo". Las conclusiones no se arruinaron; se solidificaron. El ensayo comprobó, sin asomo de dudas que **obligar a tu cliente a observar la ruedita de carga un salto de 2 a 5 minutos, NO castigó, ni provocó caídas contundentes ni crisis en las reservas del servicio Uber Pool**. La clientela solicitó el coche tal y como si nada hubiese mermado en torno suyo. 
+
+Lejos, quizá, del pensamiento popular, \textbf{esto resultaba el anhelo experimental por el cual el área logística de Uber autorizó la prueba en un inicio}. 
+
+Ellos esperaban pacientemente verificar si lograban aguantar en la base de datos a sus ansiosos despachos, tres vitales minutos adicionales. Al hacer esta contención y dejar crecer la demanda de "espera", la base de enrutamiento encuentra mayores probabilidades matemáticas de enlazar rutas contiguas geográficamente, duplicando beneficios bajo el mismo carro y salario del trayecto al conductor pero abaratando los gastos operativos por cabeza.
+
+Nuestro modelo bayesiano emitiría este reporte con rotunda confianza probabilística hacia cualquier escalón de gerencia base: "Señores, la demanda demostró ser maravillosamente inelástica en sus intervalos de tiempo experimental. Apliquen incondicionalmente estos alargues de 5 minutos, refinen sus rutas logísticas, dupliquen margen de gasolina de cada carro en las vías, y lo brillante es: el consumidor final jamás penalizará su decisión retirándose hacia la competencia".
+
+\end{document}
