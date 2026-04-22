@@ -1,0 +1,15 @@
+pandas
+numpy
+matplotlib
+seaborn
+scipy
+pymc
+arviz
+scikit-learn
+statsmodels
+requests
+yfinance
+fredapi
+openpyxl
+ipykernel
+notebook

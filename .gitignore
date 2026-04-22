@@ -3,11 +3,15 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+.codex
 .codex/
 .venv
+.venv/
 venv/
 env/
 .env
+.cache/
+.matplotlib/
 
 # LaTeX
 *.aux
