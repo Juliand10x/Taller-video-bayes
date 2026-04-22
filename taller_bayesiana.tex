@@ -87,7 +87,7 @@ donde nuestras variables candidatas iniciales son:
 \subsubsection*{Paso 1: Análisis Exploratorio de Datos (EDA)}
 Antes de construir el modelo bayesiano, realizamos un Análisis Exploratorio de Datos (EDA) guiado por visualizaciones en Python para entender el comportamiento real del servicio en Bogotá.
 
-Primero, analizamos nuestra variable objetivo (\textit{trips\_pool}). Encontramos que, en promedio, se completan 1,408 viajes compartidos por periodo, con una desviación estándar de $\approx 257$ viajes. Este es el comportamiento base que nuestros predictores deberán intentar explicar.
+Primero, analizamos nuestra variable objetivo (\textit{trips\_pool}). Encontramos que, en promedio, se completan 1,408 viajes compartidos por periodo (donde cada periodo representa una ventana de tiempo de 160 minutos, lo que equivale a 9 segmentos por día), con una desviación estándar de $\approx 257$ viajes. Este es el comportamiento base que nuestros predictores deberán intentar explicar.
 
 A continuación, visualizamos cómo nuestras covariables afectan la cantidad de viajes:
 
@@ -95,12 +95,12 @@ A continuación, visualizamos cómo nuestras covariables afectan la cantidad de 
     \centering
     \begin{minipage}{0.48\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{eda_wait_time.png}
+        \includegraphics[width=\linewidth]{graficas/eda_wait_time.png}
         \caption{Viajes según el tiempo de espera}
     \end{minipage}\hfill
     \begin{minipage}{0.48\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{eda_commute.png}
+        \includegraphics[width=\linewidth]{graficas/eda_commute.png}
         \caption{Viajes según horario (Hora Pico vs Normal)}
     \end{minipage}
 \end{figure}
@@ -116,7 +116,7 @@ Después de confirmar el impacto individual de cada variable, debíamos asegurar
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.55\textwidth]{uber_correlation.png}
+    \includegraphics[width=0.55\textwidth]{graficas/uber_correlation.png}
     \caption{Matriz de Correlación: Evaluando redundancias entre predictores}
     \label{fig:corr_uber}
 \end{figure}
@@ -168,7 +168,7 @@ Lo primero que todo científico de datos debe preguntarse es si el computador hi
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{uber_trace_plot.png}
+    \includegraphics[width=0.8\textwidth]{graficas/uber_trace_plot.png}
     \caption{Distribuciones Posteriores (Traceplot): Evaluando la estabilidad de la simulación.}
     \label{fig:uber_trace}
 \end{figure}
@@ -189,7 +189,7 @@ Para entenderlo simple, un HDI es como decirle a tu jefe: \textit{"No pondré mi
 Veamos de forma visual cuáles fueron los HDI de nuestro problema:
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{uber_forest_plot.png}
+    \includegraphics[width=0.7\textwidth]{graficas/uber_forest_plot.png}
     \caption{Intervalos de Credibilidad del 95\% (Forest Plot): HDIs paramétricos.}
     \label{fig:uber_forest}
 \end{figure}
@@ -206,7 +206,7 @@ Por muy impresionante que haya sido la estadística, antes de decirle algo ofici
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.65\textwidth]{uber_ppc_plot.png}
+    \includegraphics[width=0.65\textwidth]{graficas/uber_ppc_plot.png}
     \caption{PPC: ¿El algoritmo logra imitar a la realidad de la empresa?}
     \label{fig:uber_ppc}
 \end{figure}
