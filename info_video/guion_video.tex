@@ -37,46 +37,90 @@
 \section{Concepto Creativo}
 \textbf{Narrativa:} "El Ciclo del Evento". El video conecta el momento emocional de la compra de una boleta con la realidad logística de una ciudad. Es un viaje desde el perfil del consumidor hasta el asfalto de Bogotá, usando la estadística bayesiana como el hilo conductor que resuelve la incertidumbre en cada etapa.
 
-\section{Estructura Sugerida (Avance Actual)}
+\section{Estructura del Guion}
 \begin{enumerate}
-    \item \textbf{Introducción (1 min):} Presentación del caso. Vínculo entre eventos masivos y movilidad urbana.
-    \item \textbf{Parte I: Regresión Lineal Bayesiana (3 min):} Resultados operativos del modelo Uber Pool, análisis de incertidumbre e impacto en conductores.
+    \item \textbf{Escena 1 (Introducción):} Vínculo entre eventos masivos y movilidad urbana.
+    \begin{itemize}
+        \item \textit{Opción A:} Formato de Cuento/Historia (Tercera persona).
+        \item \textit{Opción B:} Formato Inmersivo (Segunda persona).
+    \end{itemize}
+    \item \textbf{Escena 2 (Parte I):} Resultados de la Regresión Lineal Bayesiana.
+    \begin{itemize}
+        \item \textit{Opción A:} Análisis de Ingresos del Conductor (Driver Payout).
+        \item \textit{Opción B:} Análisis de Cancelaciones del Usuario (Rider Cancellations).
+    \end{itemize}
     \item \textit{(Parte II y Discusión: Pendientes de desarrollo)}
 \end{enumerate}
 
-\hr
+\hrule
+\vspace{0.5cm}
 
 \section{Guion Literario}
 
-\subsection{Escena 1: Una Noche, Dos Historias}
-\textit{(Visuales: Cámara lenta de la multitud saliendo del Movistar Arena, luces de la ciudad reflejadas en el pavimento húmedo, el sonido lejano de bocinas y risas. Transición a una mano sosteniendo una boleta en el celular.)}
+\subsection{Escena 1 (Opción A): La Ciudad que Nunca Duerme (Narrativa)}
+\textit{(Visuales: Cámara lenta de la multitud saliendo del Movistar Arena, luces de la ciudad reflejadas en el pavimento húmedo. Sonido lejano de bocinas.)}
 
 \textbf{JD (Narrador):} 
-Es viernes por la noche en Bogotá. Las luces del Movistar Arena parpadean mientras miles de personas inundan las calles, todavía con la música resonando en sus oídos. Surge entonces la pregunta inevitable: ¿Cómo volver a casa? Pero este caos perfecto no empezó esta noche; comenzó meses atrás, con un clic. Existe un vínculo oculto entre la emoción de comprar una boleta y la logística de una ciudad que nunca duerme. Tu perfil como comprador —si planeaste con tiempo o compraste por impulso— tiene todo que ver con la odisea de buscar transporte al salir. 
+Es viernes por la noche en Bogotá. Las luces del Movistar Arena parpadean mientras miles de personas inundan las calles, todavía con las letras de \textbf{Miguel Amezquita, la nueva sensación}, resonando en sus oídos. Surge entonces la pregunta inevitable: ¿Cómo volver a casa? Pero este caos perfecto no empezó esta noche; comenzó meses atrás, con un clic. Existe un vínculo oculto entre la emoción de comprar una boleta y la logística de una ciudad que nunca duerme. 
 
-\textit{(Visuales: El ruido de la calle se desvanece sutilmente. Un celular en primer plano abre la aplicación y el logo de Uber Pool brilla en la pantalla.)}
+\textbf{JD (Narrador):} Sin embargo, mientras la ciudad celebra, en las oficinas centrales la tensión es distinta. Una junta directiva se encuentra al borde del colapso, enfrentando el desafío de una operación que parece desbordarse. Cada decisión en la aplicación, cada minuto de espera, es una apuesta de alto riesgo para la reputación de la plataforma. Para desenredar este caos y salvar la operación, el primer paso es sumergirse en los datos operativos de esa noche. Julian, tú tienes las cifras.
 
-\textbf{JD (Narrador):} Para desenredar este caos y entender cómo se mueve la ciudad, nuestra primera parada es el algoritmo de viajes compartidos de Uber.
+\textit{(Visuales: El ruido de la calle se desvanece sutilmente. Un celular en primer plano abre la aplicación y el logo de Uber Pool brilla en la pantalla. Transición a Julian Camilo.)}
 
-\subsection{Escena 2: Parte I - El Motor de la Movilidad (2 minutos)}
+\hrule
+\vspace{0.5cm}
+
+\subsection{Escena 1 (Opción B): Imagina que estás ahí (Inmersiva)}
+\textit{(Visuales: Primer plano de un celular con poca batería. Ruido de gente y tráfico intenso a la salida del Arena.)}
+
+\textbf{JD (Narrador):} 
+Imagina que estás ahí, en el \textbf{Movistar Arena}. Acaba de terminar el concierto de \textbf{Miguel Amezquita, la nueva sensación}, y todavía tienes sus canciones dándote vueltas en la cabeza mientras caminas entre miles de personas. Miras tu celular, te queda poca batería y te haces la pregunta inevitable: ¿Cómo voy a volver a casa? Pero este momento no empezó aquí; comenzó meses atrás, con un solo clic en tu pantalla para comprar la boleta. 
+
+\textbf{JD (Narrador):} Lo que quizás no sabes es que, mientras buscas transporte, en las oficinas de la compañía hay una junta directiva al borde del colapso. Ellos te están viendo a través de los datos: una operación al límite donde cada segundo que pasas esperando pone en riesgo la estabilidad del negocio. Para entender este caos, debemos analizar el algoritmo que intenta resolver tu noche y los números que explican cada decisión.
+
+\textit{(Visuales: Transición fluida de la calle a Julian Camilo frente a una pantalla con gráficas.)}
+
+\newpage
+
+\subsection{Escena 2 (Opción A): Foco en Ingresos del Conductor (Driver Payout)}
 \textit{(Visuales: Aparece Julian Camilo en pantalla.)}
 
-\textbf{JC:} Cuando la multitud abre la aplicación al mismo tiempo, la plataforma tiene que tomar decisiones rápidas. Nuestra primera pregunta fue: ¿qué factores operativos aseguran que una noche de alta demanda sea rentable para quien maneja el auto? Por eso, nuestra variable objetivo a predecir fueron las ganancias totales del conductor (conocida en el dataset como \textit{total\_driver\_payout}).
+\textbf{JC:} El análisis de esa noche de alta demanda comienza por la rentabilidad del conductor. Cuando la multitud abre la aplicación al mismo tiempo, la plataforma tiene que tomar decisiones en milisegundos. La pregunta crítica para la operación es: ¿cómo aseguramos que el servicio sea rentable para quien maneja el auto? Por eso, definimos como nuestra \textbf{variable objetivo} las ganancias totales del conductor (\textit{total\_driver\_payout}).
 
-\textbf{JC:} Para resolver esto con verdadero rigor estadístico, construimos una \textbf{regresión lineal bayesiana}. Elegimos este modelo porque, a diferencia de los métodos tradicionales, nos permite medir y manejar la incertidumbre del mundo real. Para predecir las ganancias, analizamos factores operativos clave: los viajes emparejados (\textit{total\_matches}), los viajes completados (\textit{trips\_pool}) y las cancelaciones (\textit{rider\_cancellations}). Y como no teníamos estudios históricos previos sobre el tráfico bogotano, configuramos el modelo con \textbf{priors no informativos}. Básicamente, dejamos que nuestra regresión aprendiera directamente de los datos de esa noche, sin forzar ningún sesgo inicial.
+\textbf{JC:} Para descubrirlo, miramos el volumen total de viajes (\textit{trips\_pool}) y los viajes emparejados con otros pasajeros (\textit{total\_matches}), pero nos enfocamos en lo más importante: nuestro experimento de aumentar el tiempo de espera de 2 a 5 minutos (\textit{treat}). Y como no sabíamos qué esperar de una prueba como esta en Bogotá, configuramos el modelo para que fuera totalmente objetivo, dejando que los datos de esa misma noche nos dieran la respuesta sin ningún prejuicio previo.
 
-\textbf{JD:} Y para poner a prueba el sistema, evaluamos dos escenarios críticos: primero, el impacto de trabajar en la caótica "hora pico" (\textit{commute}), y segundo, nuestro gran experimento: ¿qué pasa si obligamos al usuario a esperar 5 minutos en lugar de 2 para encontrarle un viaje compartido (\textit{treat})?
+\textit{(Nota de Edición: Mostrar diagnóstico MCMC. Archivo: \texttt{img/driver\_payout/05\_traceplot.png})}
 
-\textit{(Nota de Edición/Visuales: Mostrar brevemente el diagnóstico MCMC para la convergencia. Archivo: \texttt{img/resultados\_uber\_pool/05\_traceplot.png})}
+\textbf{JC:} El modelo nos dio una respuesta reveladora. Tras verificar la convergencia con un R-hat menor a 1.01, observamos el efecto del tiempo de espera.
 
-\textbf{JC:} Y el modelo nos dio respuestas claras. Tras verificar una convergencia perfecta con un R-hat menor a 1.01, vimos que salir a trabajar en hora pico, naturalmente, aumenta las ganancias por el enorme volumen de solicitudes. Pero el resultado verdaderamente revelador estuvo en el tiempo de espera.
+\textit{(Nota de Edición: Mostrar Forest Plot. Archivo: \texttt{img/driver\_payout/09\_forest\_plot.png})}
 
-\textit{(Nota de Edición/Visuales: Cambiar al Forest Plot que muestra los intervalos de credibilidad. Archivo: \texttt{img/resultados\_uber\_pool/09\_forest\_plot.png})}
+\textbf{JC:} Como ven en este gráfico, el coeficiente de nuestro experimento está desplazado hacia la \textbf{izquierda} y su intervalo de credibilidad es completamente \textbf{negativo}. ¿Qué significa esto? Significa que exigir 5 minutos de espera \textbf{reduce} las ganancias del conductor en más de 1,300 pesos por período. La demanda en Bogotá es sensible a la espera: la fricción genera cancelaciones que neutralizan la eficiencia del algoritmo, dejando al conductor con menos ingresos.
 
-\textbf{JC:} Como pueden ver en este gráfico, el coeficiente de nuestro experimento está completamente desplazado a la derecha y todo el intervalo de credibilidad del 95\% es positivo. ¿Qué significa esto para las personas en la vida real? Significa que la demanda en Bogotá es inelástica frente a la espera. Exigirle al usuario que aguarde esos 5 minutos le da oxígeno al algoritmo: permite emparejar a más pasajeros que van por la misma ruta. Para el usuario, asegura un viaje a casa; para el conductor, aumenta directamente sus ganancias. 
+\textit{(Nota de Edición: Mostrar PPC. Archivo: \texttt{img/driver\_payout/10\_ppc.png})}
 
-\textit{(Nota de Edición/Visuales: Mostrar el gráfico de chequeo predictivo posterior (PPC) al decir la última frase. Archivo: \texttt{img/resultados\_uber\_pool/10\_ppc.png})}
+\textbf{JC:} Esta conclusión es sólida porque nuestras simulaciones bayesianas replican casi a la perfección lo que realmente pasó en la calle.
 
-\textbf{JC:} Y sabemos que esta conclusión es sólida porque, al observar nuestro gráfico de chequeo predictivo posterior, las simulaciones de nuestra regresión bayesiana replican casi a la perfección lo que realmente pasó en la calle.
+\hrule
+\vspace{0.5cm}
+
+\subsection{Escena 2 (Opción B): Foco en la Impaciencia del Usuario (Rider Cancellations)}
+\textit{(Visuales: Aparece Julian Camilo en pantalla.)}
+
+\textbf{JC:} En medio del caos de una salida masiva, la batalla no es solo por un auto, sino contra el reloj. Para entender por qué la estabilidad del negocio se pone en riesgo, debemos encontrar el punto de quiebre del usuario: ¿qué hace que alguien decida cancelar su viaje en el momento de mayor demanda? Por eso, nuestra \textbf{variable objetivo} son las cancelaciones (\textit{rider\_cancellations}).
+
+\textbf{JC:} Analizamos el volumen de viajes emparejados (\textit{total\_matches}) y el efecto de la hora pico (\textit{commute}), pero nos concentramos en lo que realmente importa: el impacto de pasar de 2 a 5 minutos de espera (\textit{treat}). Y como queríamos una respuesta honesta sobre el comportamiento del usuario en Bogotá, dejamos que el modelo se alimentara exclusivamente de la evidencia de esa noche, sin suposiciones previas, para que la respuesta fuera 100\% objetiva.
+
+\textit{(Nota de Edición: Mostrar diagnóstico MCMC. Archivo: \texttt{img/rider\_cancellation/05\_traceplot.png})}
+
+\textbf{JC:} Los resultados son una radiografía de la impaciencia bogotana. El modelo convergió perfectamente, permitiéndonos ver el impacto real de la espera.
+
+\textit{(Nota de Edición: Mostrar Forest Plot. Archivo: \texttt{img/rider\_cancellation/09\_forest\_plot.png})}
+
+\textbf{JC:} Observen el coeficiente del experimento: está totalmente desplazado a la \textbf{derecha}. Esto confirma que aumentar la espera de 2 a 5 minutos \textbf{incrementa sistemáticamente} las cancelaciones en casi 28 unidades por período. En una ciudad con la urgencia de Bogotá, cada minuto adicional de espera es un multiplicador de fricción que empuja al usuario a abandonar la plataforma.
+
+\textit{(Nota de Edición: Mostrar PPC. Archivo: \texttt{img/rider\_cancellation/10\_ppc.png})}
+
+\textbf{JC:} Esta solidez predictiva nos permite afirmar que la logística no puede depender solo de pedirle al usuario que espere más; necesitamos estrategias de ubicación inteligente para combatir esta impaciencia.
 
 \end{document}

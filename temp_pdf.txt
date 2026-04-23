@@ -1,0 +1,311 @@
+Universidad Externado
+
+Pregrado en Ciencia de Datos
+
+Universidad Externado
+Taller Integrado de Regresión Bayesiana
+Caso UBER Pool y Venta de Boletas en el Movistar Arena
+Estadı́stica Bayesiana
+Bogotá, Colombia
+
+Introducción del caso
+Bogotá no es una ciudad: es una prueba estadı́stica de resistencia humana. Una variable aleatoria con colas
+pesadas, donde cualquier intento de optimización termina, tarde o temprano, en un trancón que pone en
+duda todas las decisiones de vida que llevaron hasta ese punto.
+Esa mañana, en una sala de juntas excesivamente elegante para lo que estaba a punto de ocurrir, se
+reunieron dos mundos que jamás debieron cruzarse: los estrategas de UBER y los dueños del Movistar
+Arena. Lo que comenzó como una conversación técnica terminó convirtiéndose en un ejercicio colectivo de
+negación, sarcasmo y decisiones cuestionables.
+El primer problema parecı́a sencillo. UBER querı́a implementar UBER Pool en Bogotá. La idea, según
+una presentación que alguien habı́a preparado con demasiados gráficos y muy poca experiencia en la ciudad,
+era brillante: compartir viajes, reducir costos, optimizar rutas y mejorar la eficiencia del sistema.
+Nadie en la sala se atrevió a decirlo en voz alta, pero todos lo pensaban: compartir carro en Bogotá
+implicaba aceptar voluntariamente una experiencia social con desconocidos en medio del caos, el ruido, la
+impaciencia y la sospecha constante de que el tiempo —y el dinero— se está perdiendo.
+El segundo problema era más sutil, pero igual de peligroso. El Movistar Arena necesitaba vender todas
+las boletas del próximo concierto de Miguel Amezquita, la nueva revelación. No porque la música fuera
+necesariamente inolvidable, sino porque el negocio no admite sillas vacı́as.
+El comportamiento de los compradores, sin embargo, no era homogéneo. Algunos planificaban con semanas de anticipación, como si comprar una boleta fuera una decisión estratégica de largo plazo. Otros
+aparecı́an a última hora, impulsados por el miedo a perderse el evento o por una repentina ilusión de última
+instancia. Y entre ambos extremos, ese grupo incómodo: ni organizados ni caóticos, simplemente indecisos.
+Lo que nadie esperaba era que ambos problemas estuvieran profundamente conectados.
+Los conciertos generan picos de demanda, tarifas dinámicas que rozan lo ofensivo, tiempos de espera que
+parecen castigos personales y usuarios con niveles de paciencia cercanos a cero. En ese contexto, pedirle a
+1
+
+Universidad Externado
+
+Pregrado en Ciencia de Datos
+
+alguien que comparta un vehı́culo con desconocidos no es una propuesta: es un experimento social con altas
+probabilidades de fracaso.
+Fue entonces cuando alguien —probablemente demasiado optimista— propuso lo inevitable:
+“¿Y si analizamos ambos problemas juntos?”
+El silencio que siguió no fue de aprobación, sino de resignación.
+Ası́ nació el proyecto.
+Doce personas fueron convocadas. No por su capacidad de resolver problemas, sino porque alguien decidió
+que eran suficientes para generar uno más grande:
+BRAYAN CAMILO, convencido de que cualquier sistema puede arreglarse con una interfaz bonita.
+JULIAN CAMILO, que cree que el problema siempre son los usuarios, nunca el modelo.
+JUAN DAVID, que desconfı́a de todo, excepto de los resultados que él mismo aprueba.
+ALLISON MICHELLE, que insiste en que la experiencia del cliente importa, incluso cuando nadie
+quiere escuchar eso.
+LUNA NICOLE, que entiende la ciudad mejor que cualquier algoritmo.
+MATTIAS, que sigue comparando Bogotá con ciudades donde las cosas sı́ funcionan.
+MIGUEL DAVID, cuyo único objetivo es vender todas las boletas sin importar cómo.
+NAOMI VALENTINA, que sabe que la percepción del usuario puede destruir cualquier modelo bien
+estimado.
+ALEJANDRO, que cree que los compradores de última hora deberı́an ser una categorı́a de riesgo.
+SANTIAGO, obsesionado con clasificar absolutamente todo.
+ANGÉLICA LORENA, que insiste en que comodidad, tiempo y costo no pueden analizarse por separado.
+Y finalmente, JUAN TOMAS, el único que sospecha que el problema no es el modelo. . . sino la realidad.
+El equipo recibió una instrucción aparentemente simple: utilizar datos para entender el problema.
+Lo que no les dijeron es que los datos, en este caso, no iban a resolver nada por sı́ solos.
+Tendrı́an que decidir qué medir, cómo modelarlo y, peor aún, qué hacer cuando los resultados no fueran
+concluyentes.
+Porque en Bogotá, como en la inferencia bayesiana, la incertidumbre no es un error.
+Es la regla.
+
+Primera base: experimento de UBER Pool en Bogotá
+A continuación, se presenta la descripción de las variables utilizadas en el análisis de la posible implementación
+de UBER Pool en Bogotá:
+• Period (Tiempo): perı́odo durante el cual se recopiló la información.
+• wait time (Tiempo de espera): variable con dos posibles valores:
+– 2 mins: si el algoritmo de emparejamiento permitió esperar hasta 2 minutos.
+– 5 mins: si el algoritmo permitió esperar hasta 5 minutos.
+• treat (Tratamiento): variable booleana:
+
+2
+
+Universidad Externado
+
+Pregrado en Ciencia de Datos
+
+– TRUE: si wait time = 5 mins.
+– FALSE: si wait time = 2 mins.
+• commute (Hora pico): variable booleana que indica si el perı́odo corresponde a horas pico:
+– TRUE: si el perı́odo se encuentra entre 7:00–9:40 a.m. o 3:00–5:40 p.m.
+– FALSE: en caso contrario.
+• trips pool (Viajes POOL): número total de viajes POOL completados en el perı́odo.
+• trips express (Viajes Express POOL): número total de viajes Express POOL completados en el
+perı́odo.
+• rider cancellations (Cancelaciones de pasajeros): número total de solicitudes canceladas por el
+pasajero.
+• total driver payout (Pago total a conductores): total pagado a conductores por los viajes completados.
+• total matches (Total de emparejamientos): número de viajes que fueron emparejados con al
+menos otro pasajero.
+• total double matches (Total de doble emparejamiento): número de viajes que fueron emparejados con al menos dos pasajeros adicionales.
+
+Segunda base: compradores del concierto de Miguel Amezquita
+La segunda base corresponde a clientes que compraron entradas para el próximo concierto de Miguel Amezquita
+en el Movistar Arena. Las variables disponibles son:
+• customerID: identificador único del cliente.
+• customerName: nombre del cliente.
+• Age: edad del comprador.
+• Fan Mailing List: indica si el cliente pertenece a la lista de fans o mailing promocional.
+• Customer Type: categorı́a objetivo del comprador:
+– Planner
+– Last-Minute
+– In-Between
+• Concierto: evento o concierto asociado a la compra.
+• Num Tickets Purchased: número de boletas compradas.
+• Seat Location: ubicación o zona de la silleterı́a.
+• Ticket Price: precio de la boleta.
+• Concession Purchases: compras adicionales en alimentos o concesiones.
+• Days Before Concierto: cantidad de dı́as de anticipación con la que se realizó la compra.
+
+3
+
+Universidad Externado
+
+Pregrado en Ciencia de Datos
+
+Propósito general del taller
+Este taller integra dos problemas de negocio relacionados con decisiones bajo incertidumbre:
+1. Analizar, mediante regresión lineal bayesiana, relaciones relevantes en el experimento de UBER
+Pool para evaluar la viabilidad operativa del servicio en Bogotá.
+2. Analizar, mediante regresión multinomial bayesiana, la probabilidad de clasificar un cliente dentro
+de alguno de los tres tipos de comprador del concierto.
+La articulación entre ambos problemas deberá aparecer en la discusión final: antes y después de conciertos
+masivos, la dificultad para conseguir vehı́culo, las tarifas elevadas y la baja paciencia de los usuarios generan
+una oportunidad para pensar soluciones conjuntas entre movilidad y entretenimiento.
+
+1
+
+Parte I: Regresión Lineal Bayesiana
+
+La primera parte del taller se mantiene centrada en una regresión lineal bayesiana. El objetivo es que el
+equipo proponga una relación cuantitativa relevante dentro del caso de UBER Pool y la interprete en función
+de la experiencia del usuario, la operación o los costos.
+
+1.1
+
+Desarrollo del modelo
+
+El modelo lineal bayesiano tendrá la forma general:
+yi = β0 + β1 X1i + β2 X2i + · · · + βk Xki + εi ,
+
+εi ∼ N (0, σ 2 )
+
+donde:
+• yi será la variable dependiente elegida por el equipo.
+• X1i , X2i , . . . , Xki serán las variables predictoras seleccionadas.
+• β0 , β1 , . . . , βk serán coeficientes estimados bajo un enfoque bayesiano.
+• σ 2 representa la varianza del error.
+Los estudiantes deberán justificar:
+• por qué eligieron la variable objetivo;
+• qué variables explicativas consideran relevantes;
+• qué tipo de prior utilizaron y por qué;
+• cómo interpretan el modelo en el contexto del problema.
+
+1.2
+
+Gráficos y resultados esperados
+
+Se espera que el equipo construya al menos los siguientes elementos:
+• distribuciones posteriores de los coeficientes;
+• intervalos de credibilidad del 95%;
+• gráfico de residuos o chequeo del ajuste;
+• interpretación del sentido económico u operativo de los resultados.
+
+4
+
+Universidad Externado
+
+2
+
+Pregrado en Ciencia de Datos
+
+Parte II: Regresión Multinomial Bayesiana
+
+En la segunda parte del taller, el equipo deberá modelar la probabilidad de que un cliente pertenezca a una
+de las tres categorı́as de compra de boletas:
+Customer Type ∈ {Planner, Last-Minute, In-Between}.
+El objetivo no es solamente clasificar, sino comprender qué caracterı́sticas del cliente y de su compra
+están asociadas con cada tipo de comportamiento.
+
+2.1
+
+Desarrollo del modelo
+
+La regresión multinomial bayesiana puede escribirse, usando una categorı́a de referencia, como:
+exp(αc + Xi′ βc )
+,
+P (Yi = c | Xi ) = PC
+′
+j=1 exp(αj + Xi βj )
+
+c = 1, . . . , C
+
+donde:
+• Yi representa el tipo de cliente para el comprador i;
+• Xi es el vector de variables predictoras;
+• αc es el intercepto asociado a la categorı́a c;
+• βc es el vector de coeficientes para la categorı́a c;
+• C = 3 corresponde al número total de categorı́as.
+El equipo deberá seleccionar y justificar las variables predictoras que considere útiles para aproximar el
+tipo de cliente. Entre las variables que podrı́an explorarse se encuentran:
+• Age
+• Fan Mailing List
+• Num Tickets Purchased
+• Seat Location
+• Ticket Price
+• Concession Purchases
+• Days Before Concierto
+
+2.2
+
+Preguntas orientadoras
+
+El modelo deberá ayudar a discutir, entre otras, las siguientes preguntas:
+• ¿Qué caracterı́sticas parecen asociarse con compradores que planean con anticipación?
+• ¿Qué señales identifican a quienes compran a última hora?
+• ¿Qué tan diferente es el grupo intermedio frente a los otros dos?
+• ¿Cómo podrı́a esta segmentación ayudar al Movistar Arena a diseñar campañas, precios o logı́stica?
+• ¿Qué implicaciones tendrı́a esta clasificación para anticipar la demanda de transporte antes y después
+del concierto?
+5
+
+Universidad Externado
+
+2.3
+
+Pregrado en Ciencia de Datos
+
+Gráficos y resultados esperados
+
+Se espera que el equipo construya al menos los siguientes elementos:
+• distribuciones posteriores de coeficientes por categorı́a;
+• probabilidades predichas por tipo de cliente;
+• matriz de clasificación o alguna medida de desempeño adecuada;
+• visualización comparativa entre perfiles de compradores;
+• interpretación probabilı́stica de los resultados.
+
+Articulación entre los dos problemas
+Una parte fundamental del taller consiste en no tratar ambos casos como ejercicios aislados. La recomendación
+final deberá mostrar cómo la segmentación de compradores del concierto puede dialogar con el problema de
+movilidad:
+• los compradores Last-Minute podrı́an concentrar decisiones de transporte bajo mayor presión;
+• los compradores Planner podrı́an ser más sensibles a estrategias preventivas o promociones anticipadas;
+• las horas de entrada y salida de eventos masivos pueden alterar la experiencia del usuario en plataformas
+de movilidad;
+• una mejor comprensión del perfil del comprador podrı́a apoyar decisiones de coordinación entre conciertos y transporte.
+La discusión final debe proponer una narrativa integrada: cómo los datos de compra y los datos
+de movilidad pueden ayudar a diseñar una experiencia menos caótica para el usuario y más
+eficiente para las organizaciones involucradas.
+
+Descripción de la entrega
+La entrega final será un video de 7 minutos en el que el equipo presentará los resultados de los dos análisis
+bayesianos y su recomendación final.
+
+Estructura sugerida del video
+1. Introducción (1 minuto)
+• presentación breve del caso integrado;
+• explicación del vı́nculo entre conciertos, venta de boletas y movilidad.
+2. Resultados del modelo de regresión lineal bayesiana (2 minutos)
+• variable objetivo elegida;
+• variables explicativas;
+• priors;
+• resultados principales e interpretación.
+3. Resultados del modelo de regresión multinomial bayesiana (2 minutos)
+6
+
+Universidad Externado
+
+Pregrado en Ciencia de Datos
+
+• categorı́as del cliente;
+• variables usadas para clasificar;
+• probabilidades estimadas;
+• hallazgos principales.
+4. Discusión integrada y recomendación (1.5 minutos)
+• conexión entre tipo de comprador y presión sobre la movilidad;
+• propuesta de solución o estrategia.
+5. Cierre (30 segundos)
+• conclusión final;
+• reflexión sobre incertidumbre y toma de decisiones.
+
+Requisitos técnicos
+• La duración total del video no debe exceder los 7 minutos.
+• Deben utilizarse visualizaciones claras y legibles.
+• El lenguaje debe ser comprensible y orientado a la toma de decisiones.
+• El código debe entregarse organizado y comentado.
+• La recomendación final debe conectar explı́citamente ambos problemas.
+
+Criterios de evaluación
+• Claridad en la formulación de los modelos: 20%
+• Calidad de la interpretación de resultados: 20%
+• Calidad de visualizaciones y evidencia empı́rica: 20%
+• Integración argumentativa entre ambos problemas: 20%
+• Código y reproducibilidad: 20%
+
+Nota final para el equipo
+En este taller no se espera que todos los equipos tomen exactamente las mismas decisiones de modelación.
+Parte del ejercicio consiste en proponer una aproximación razonable, justificarla y defenderla. Lo
+importante no será únicamente llegar a un resultado, sino mostrar que entienden el problema, que saben
+traducirlo a un modelo probabilı́stico y que pueden convertir los hallazgos en una recomendación útil para
+una junta directiva que claramente ya está al borde del colapso.
+
+7
+
+

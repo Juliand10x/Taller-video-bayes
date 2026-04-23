@@ -52,30 +52,25 @@ Bajo esta premisa lógica, el modelo lineal bayesiano propuesto tendría la form
 
 donde nuestras variables candidatas iniciales son:
 \begin{itemize}
-    \item $y_i$ (\textit{trips\_pool}):
+    \item $y_i$ (\textit{rider\_cancellations}):
     \begin{itemize}
-        \item \textbf{Descripción:} Cantidad de viajes compartidos completados (número entero).
-        \item \textbf{Justificación:} Es lo que queremos predecir. Nos dice directamente qué tanto la gente está usando el servicio.
+        \item \textbf{Descripción:} Cantidad de cancelaciones por parte del pasajero en cada periodo.
+        \item \textbf{Justificación:} Elegimos esta variable porque es el indicador más directo de la \textbf{fricción del usuario}. Mientras que los ingresos dependen de factores externos como tarifas dinámicas, las cancelaciones capturan el punto de quiebre de la paciencia del cliente bogotano frente a la espera.
     \end{itemize}
-    \item $X_{1i}$ (\textit{wait\_time}):
+    \item $X_{1i}$ (\textit{total\_matches}) y $X_{2i}$ (\textit{trips\_pool}):
     \begin{itemize}
-        \item \textbf{Descripción:} Tiempo de espera que ve el usuario en la app (medido en minutos).
-        \item \textbf{Justificación:} Es el cambio principal que introdujo Uber. Lo usamos para ver si hacer esperar a la gente reduce la cantidad de viajes.
+        \item \textbf{Descripción:} Volumen de emparejamientos y viajes completados.
+        \item \textbf{Justificación:} Actúan como variables de \textbf{control estructural}. Capturan la escala de actividad en el periodo; al incluirlas, aseguramos que el efecto del tratamiento que encontremos no sea simplemente un subproducto de tener "más gente en la calle", sino un efecto puro de la política de espera.
     \end{itemize}
-    \item $X_{2i}$ (\textit{treat}):
+    \item $X_{3i}$ (\textit{treat}):
     \begin{itemize}
-        \item \textbf{Descripción:} Variable que vale 1 si el usuario entró al experimento y 0 si no (el experimento consistió en aumentar intencionalmente el tiempo de espera a 5 minutos, en lugar de los 2 minutos habituales).
-        \item \textbf{Justificación:} Nos sirve para identificar fácilmente a quiénes se les aplicó la nueva estrategia.
+        \item \textbf{Descripción:} Variable binaria (1 si el tiempo de espera configurado es 5 min, 0 si es 2 min).
+        \item \textbf{Justificación:} Es nuestro \textbf{predictor experimental}. Nos permite cuantificar exactamente cuánto aumenta el riesgo de cancelación al estirar el umbral de espera del usuario.
     \end{itemize}
-    \item $X_{3i}$ (\textit{commute}):
+    \item $X_{4i}$ (\textit{commute}):
     \begin{itemize}
-        \item \textbf{Descripción:} Variable que vale 1 si es hora pico y 0 si es un horario normal.
-        \item \textbf{Justificación:} La usamos porque es obvio que en hora pico siempre habrá más viajes, sin importar el tiempo de espera.
-    \end{itemize}
-    \item $\beta$ (Coeficientes):
-    \begin{itemize}
-        \item \textbf{Descripción:} Números que el modelo calculará.
-        \item \textbf{Justificación:} Nos indicarán exactamente cuántos viajes se pierden o se ganan por cada minuto extra de espera.
+        \item \textbf{Descripción:} Variable binaria para horas pico (7-9:40am o 3-5:40pm).
+        \item \textbf{Justificación:} Necesaria para aislar el efecto de la congestión y el estrés urbano del horario bogotano, que es un disparador natural de impaciencia.
     \end{itemize}
     \item $\sigma^2$ (Varianza del Error):
     \begin{itemize}
@@ -147,7 +142,11 @@ Tras revisar la información y analizar las correlaciones entre variables, la co
 
 Por todo lo anterior, \textbf{nuestro modelo final utilizará solo dos predictoras}: el tiempo de espera (\textit{wait\_time}) y si es hora pico o no (\textit{commute}).
 \subsubsection*{Paso 3: Justificación de los Priors}
-Ya con una selección de variables matemáticamente robusta, el último paso es definir nuestros \textit{priors} para los coeficientes ($\beta$) y para la varianza del error ($\sigma$).
+Para nuestra regresión bayesiana, hemos optado por utilizar \textbf{priors débilmente informativos}:
+\begin{itemize}
+    \item $\beta \sim N(0, 100^2)$: Dado que no contamos con estudios históricos previos sobre el comportamiento específico de las cancelaciones de Uber Pool en el mercado de Bogotá, preferimos que los datos "hablen por sí mismos". Un prior normal centrado en cero con una desviación estándar amplia asegura que el modelo pueda explorar libremente el impacto real del tratamiento sin sesgos previos.
+    \item $\sigma \sim HalfNormal(100)$: Para el error residual, buscamos una distribución que sea siempre positiva pero que no sea excesivamente rígida, permitiendo capturar la variabilidad natural del comportamiento humano.
+\end{itemize}
 
 Para los coeficientes $\beta$, elegimos distribuciones Normales centradas en cero con una variabilidad bastante amplia: $\beta \sim \text{Normal}(0, 10)$. Estos funcionan como priors débilmente informativos. En la práctica, poner la media en cero significa que no asumimos de entrada si el efecto será positivo o negativo; dejamos que la evidencia de los datos de Uber determine tanto la dirección como la magnitud real del impacto.
 
@@ -168,8 +167,8 @@ Lo primero que todo científico de datos debe preguntarse es si el computador hi
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{img/uber/uber_trace_plot.png}
-    \caption{Distribuciones Posteriores (Traceplot): Evaluando la estabilidad de la simulación.}
+    \includegraphics[width=0.8\textwidth]{resultados_rider_cancellation/05_traceplot.png}
+    \caption{Distribuciones Posteriores (Traceplot): Evaluación de la estabilidad para el modelo de cancelaciones.}
     \label{fig:uber_trace}
 \end{figure}
 
@@ -189,15 +188,15 @@ Para entenderlo simple, un HDI es como decirle a tu jefe: \textit{"No pondré mi
 Veamos de forma visual cuáles fueron los HDI de nuestro problema:
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{img/uber/uber_forest_plot.png}
-    \caption{Intervalos de Credibilidad del 95\% (Forest Plot): HDIs paramétricos.}
+    \includegraphics[width=0.7\textwidth]{resultados_rider_cancellation/09_forest_plot.png}
+    \caption{Intervalos de Credibilidad del 95\% (Forest Plot): Impacto real en las cancelaciones.}
     \label{fig:uber_forest}
 \end{figure}
 
-Al leer los "bigotes azules" de este gráfico y nuestro espacio en blanco numérico, concluimos que:
+Al leer los "bigotes azules" de este gráfico, obtenemos una conclusión radicalmente distinta a la del volumen de viajes:
 \begin{itemize}
-    \item Estamos 95\% seguros de que aumentar el tiempo en minutos (\textit{beta\_wait}) cambiará la cantidad total de viajes en un rango de \textbf{[-4.6 a 27.4]}. 
-    \item Estamos 95\% seguros de que la alta estacionalidad de la hora pico (\textit{beta\_commute}) altera los viajes en un rango de \textbf{[-15.7 a 21.7]}.
+    \item \textbf{Efecto del Tratamiento (\textit{beta\_treat}):} El intervalo HDI al 95\% se ubica entre \textbf{[18.9 y 35.7]} cancelaciones adicionales. Lo más importante: \textbf{el intervalo NO cruza el cero}. Esto indica una evidencia estadística sólida de que aumentar la espera a 5 minutos incrementa sistemáticamente las cancelaciones.
+    \item \textbf{Efecto de Hora Pico (\textit{beta\_commute}):} Con un rango de \textbf{[47.0 a 83.0]}, confirmamos que la congestión urbana es el mayor disparador de frustración del usuario en Bogotá.
 \end{itemize}
 
 \subsubsection*{3. Prueba final: ¿El modelo logra parecerse a Uber? (Gráfica PPC)}
@@ -206,22 +205,18 @@ Por muy impresionante que haya sido la estadística, antes de decirle algo ofici
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.65\textwidth]{img/uber/uber_ppc_plot.png}
-    \caption{PPC: ¿El algoritmo logra imitar a la realidad de la empresa?}
+    \includegraphics[width=0.65\textwidth]{resultados_rider_cancellation/10_ppc.png}
+    \caption{PPC: Validación predictiva para el modelo de fricción del usuario.}
     \label{fig:uber_ppc}
 \end{figure}
-La gráfica contesta nuestras dudas de forma elocuente. Como queda claro, tanto las múltiples iteraciones azules de la máquina, como la media del modelo (\textit{línea naranja}), logran capturar densamente la estructura inicial negra que era equivalente a los datos reales de Uber. Nuestro modelo es apto y está validado.
+La gráfica contesta nuestras dudas de forma elocuente. Como queda claro, tanto las múltiples iteraciones azules de la máquina como la media del modelo logran capturar la estructura de los datos reales de cancelaciones.
 
-\subsubsection*{Conclusión Ejecutiva: Un Sueño Cumplido para la Sede Central}
+\subsubsection*{Conclusión Operativa: La Radiografía de la Impaciencia}
 
-¿Qué significa esto a nivel de negocio y de operaciones? La matemática de nuestros cálculos está en el \textit{Forest Plot}. Allí hay un minúsculo pero asombroso detalle probabilístico: \textbf{Ambos intervalos del 95\% atraviesan la línea vertical del cero} (sus posibles efectos nacían en números negativos y llegaban hasta los números positivos). 
+¿Qué significa esto para Uber Bogotá? A diferencia del análisis simple de volumen de viajes, el modelo de cancelaciones revela que **el usuario bogotano sí penaliza la espera**. 
 
-Si a las matemáticas les resulta igualmente posible que el tiempo que hiciste demorar afecte un -4 o un +20 tus ventas futuras; se concluye globalmente bajo "Significancia de Efecto nulo". Las conclusiones no se arruinaron; se solidificaron. El ensayo comprobó, sin asomo de dudas que **obligar a tu cliente a observar la ruedita de carga un salto de 2 a 5 minutos, NO castigó, ni provocó caídas contundentes ni crisis en las reservas del servicio Uber Pool**. La clientela solicitó el coche tal y como si nada hubiese mermado en torno suyo. 
+El hecho de que el intervalo de \textit{beta\_treat} no cruce el cero es una señal de alerta para el área logística. Si bien obligar al usuario a esperar 5 minutos puede parecer una "eficiencia" en el papel, en la práctica estamos empujando a ~28 usuarios adicionales por periodo a cancelar su viaje. Esto no es solo pérdida de ingresos inmediata, sino un daño potencial a la lealtad de marca a largo plazo. 
 
-Lejos, quizá, del pensamiento popular, \textbf{esto resultaba el anhelo experimental por el cual el área logística de Uber autorizó la prueba en un inicio}. 
-
-Ellos esperaban pacientemente verificar si lograban aguantar en la base de datos a sus ansiosos despachos, tres vitales minutos adicionales. Al hacer esta contención y dejar crecer la demanda de "espera", la base de enrutamiento encuentra mayores probabilidades matemáticas de enlazar rutas contiguas geográficamente, duplicando beneficios bajo el mismo carro y salario del trayecto al conductor pero abaratando los gastos operativos por cabeza.
-
-Nuestro modelo bayesiano emitiría este reporte con rotunda confianza probabilística hacia cualquier escalón de gerencia base: "Señores, la demanda demostró ser maravillosamente inelástica en sus intervalos de tiempo experimental. Apliquen incondicionalmente estos alargues de 5 minutos, refinen sus rutas logísticas, dupliquen margen de gasolina de cada carro en las vías, y lo brillante es: el consumidor final jamás penalizará su decisión retirándose hacia la competencia".
+En conclusión, la demanda de Uber Pool en Bogotá demuestra ser **elástica frente a la frustración**. Los resultados sugieren que cualquier política de "espera intencional" debe ser compensada con estrategias de incentivos o, mejor aún, con un despliegue predictivo de flota basado en los patrones que analizaremos en la siguiente fase del taller (Multinomial).
 
 \end{document}
