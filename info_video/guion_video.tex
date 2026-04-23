@@ -1,0 +1,82 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{titlesec}
+
+\geometry{margin=2cm}
+
+\titleformat{\section}{\large\bfseries\color{blue}}{}{0pt}{}
+\titleformat{\subsection}{\normalsize\bfseries}{}{0pt}{}
+
+\title{
+    \textbf{\huge Guion de Video Integrado: Ciencia de Datos en el Movistar Arena} \\
+    \large De la Venta de Boletas a la Movilidad Urbana \\
+    \vspace{0.5cm}
+    \textit{Facultad de Ciencia de Datos - Universidad Externado}
+}
+
+\author{
+    \textbf{Equipo Consultor:} \\
+    Julian Camilo, Julián Duarte, Tomás Rincón
+}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Concepto Creativo}
+\textbf{Narrativa:} "El Ciclo del Evento". El video conecta el momento emocional de la compra de una boleta con la realidad logística de una ciudad. Es un viaje desde el perfil del consumidor hasta el asfalto de Bogotá, usando la estadística bayesiana como el hilo conductor que resuelve la incertidumbre en cada etapa.
+
+\section{Estructura Sugerida (Avance Actual)}
+\begin{enumerate}
+    \item \textbf{Introducción (1 min):} Presentación del caso. Vínculo entre eventos masivos y movilidad urbana.
+    \item \textbf{Parte I: Regresión Lineal Bayesiana (3 min):} Resultados operativos del modelo Uber Pool, análisis de incertidumbre e impacto en conductores.
+    \item \textit{(Parte II y Discusión: Pendientes de desarrollo)}
+\end{enumerate}
+
+\hr
+
+\section{Guion Literario}
+
+\subsection{Escena 1: Una Noche, Dos Historias}
+\textit{(Visuales: Cámara lenta de la multitud saliendo del Movistar Arena, luces de la ciudad reflejadas en el pavimento húmedo, el sonido lejano de bocinas y risas. Transición a una mano sosteniendo una boleta en el celular.)}
+
+\textbf{JD (Narrador):} 
+Es viernes por la noche en Bogotá. Las luces del Movistar Arena parpadean mientras miles de personas inundan las calles, todavía con la música resonando en sus oídos. Surge entonces la pregunta inevitable: ¿Cómo volver a casa? Pero este caos perfecto no empezó esta noche; comenzó meses atrás, con un clic. Existe un vínculo oculto entre la emoción de comprar una boleta y la logística de una ciudad que nunca duerme. Tu perfil como comprador —si planeaste con tiempo o compraste por impulso— tiene todo que ver con la odisea de buscar transporte al salir. 
+
+\textit{(Visuales: El ruido de la calle se desvanece sutilmente. Un celular en primer plano abre la aplicación y el logo de Uber Pool brilla en la pantalla.)}
+
+\textbf{JD (Narrador):} Para desenredar este caos y entender cómo se mueve la ciudad, nuestra primera parada es el algoritmo de viajes compartidos de Uber.
+
+\subsection{Escena 2: Parte I - El Motor de la Movilidad (2 minutos)}
+\textit{(Visuales: Aparece Julian Camilo en pantalla.)}
+
+\textbf{JC:} Cuando la multitud abre la aplicación al mismo tiempo, la plataforma tiene que tomar decisiones rápidas. Nuestra primera pregunta fue: ¿qué factores operativos aseguran que una noche de alta demanda sea rentable para quien maneja el auto? Por eso, nuestra variable objetivo a predecir fueron las ganancias totales del conductor (conocida en el dataset como \textit{total\_driver\_payout}).
+
+\textbf{JC:} Para resolver esto con verdadero rigor estadístico, construimos una \textbf{regresión lineal bayesiana}. Elegimos este modelo porque, a diferencia de los métodos tradicionales, nos permite medir y manejar la incertidumbre del mundo real. Para predecir las ganancias, analizamos factores operativos clave: los viajes emparejados (\textit{total\_matches}), los viajes completados (\textit{trips\_pool}) y las cancelaciones (\textit{rider\_cancellations}). Y como no teníamos estudios históricos previos sobre el tráfico bogotano, configuramos el modelo con \textbf{priors no informativos}. Básicamente, dejamos que nuestra regresión aprendiera directamente de los datos de esa noche, sin forzar ningún sesgo inicial.
+
+\textbf{JD:} Y para poner a prueba el sistema, evaluamos dos escenarios críticos: primero, el impacto de trabajar en la caótica "hora pico" (\textit{commute}), y segundo, nuestro gran experimento: ¿qué pasa si obligamos al usuario a esperar 5 minutos en lugar de 2 para encontrarle un viaje compartido (\textit{treat})?
+
+\textit{(Nota de Edición/Visuales: Mostrar brevemente el diagnóstico MCMC para la convergencia. Archivo: \texttt{img/resultados\_uber\_pool/05\_traceplot.png})}
+
+\textbf{JC:} Y el modelo nos dio respuestas claras. Tras verificar una convergencia perfecta con un R-hat menor a 1.01, vimos que salir a trabajar en hora pico, naturalmente, aumenta las ganancias por el enorme volumen de solicitudes. Pero el resultado verdaderamente revelador estuvo en el tiempo de espera.
+
+\textit{(Nota de Edición/Visuales: Cambiar al Forest Plot que muestra los intervalos de credibilidad. Archivo: \texttt{img/resultados\_uber\_pool/09\_forest\_plot.png})}
+
+\textbf{JC:} Como pueden ver en este gráfico, el coeficiente de nuestro experimento está completamente desplazado a la derecha y todo el intervalo de credibilidad del 95\% es positivo. ¿Qué significa esto para las personas en la vida real? Significa que la demanda en Bogotá es inelástica frente a la espera. Exigirle al usuario que aguarde esos 5 minutos le da oxígeno al algoritmo: permite emparejar a más pasajeros que van por la misma ruta. Para el usuario, asegura un viaje a casa; para el conductor, aumenta directamente sus ganancias. 
+
+\textit{(Nota de Edición/Visuales: Mostrar el gráfico de chequeo predictivo posterior (PPC) al decir la última frase. Archivo: \texttt{img/resultados\_uber\_pool/10\_ppc.png})}
+
+\textbf{JC:} Y sabemos que esta conclusión es sólida porque, al observar nuestro gráfico de chequeo predictivo posterior, las simulaciones de nuestra regresión bayesiana replican casi a la perfección lo que realmente pasó en la calle.
+
+\end{document}
